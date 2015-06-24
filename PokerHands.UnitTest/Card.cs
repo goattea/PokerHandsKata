@@ -7,6 +7,7 @@ namespace PokerHands.UnitTest
 	{
 		public int FaceValue { get; set; }
 		public char Suit { get; set; }
+		public string Face { get; }
 
 		public Card(string cardValue)
 		{
@@ -34,6 +35,22 @@ namespace PokerHands.UnitTest
 				return 10;
 			else
 				return int.Parse(faceValue.ToString());
+		}
+
+		string GetFace(char faceValue)
+		{
+			if (faceValue == 'A')
+				return "Ace";
+			else if (faceValue == 'K')
+				return "King";
+			else if (faceValue == 'Q')
+				return "Queen";
+			else if (faceValue == 'J')
+				return "Jack";
+			else if (faceValue == 'T')
+				return "10";
+			else
+				return faceValue.ToString();
 		}
 		
 		public int CompareTo(Card other)

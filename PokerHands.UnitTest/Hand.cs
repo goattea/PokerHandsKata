@@ -24,7 +24,7 @@ namespace PokerHands.UnitTest
 
 		private void SortHand()
 		{
-			Cards = Cards.OrderByDescending(x => x).ToList();
+			Cards.Sort();
 		}
 	}
 }
