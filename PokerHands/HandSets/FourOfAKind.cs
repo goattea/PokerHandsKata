@@ -6,27 +6,39 @@ namespace PokerHands.HandSets
 {
 	public class FourOfAKind : IHandSet
 	{
-		private Card[] _fourCards;
-
 		public double Probability
 		{
 			get { return Constants.Probability.FourOfAKind; }
 		}
 
-		public string Name
+		public Card[] FourOfAKindCards { get; private set; }
+
+		public FourOfAKind(Hand hand)
 		{
-			get { return ToString(); }
+			if (!DoesHandMeetCriteria(hand))
+				throw new Exception(string.Format("Cannot compose Four of a Kind with hand {0}", hand));
+
+			SetFourOfAKindCards(hand);
+
 		}
 
-		public Hand Hand { get; private set; }
-
-		public Card[] FourOfAKindCards { get {return _fourCards; } }
+		private void SetFourOfAKindCards(Hand hand)
+		{
+			for (var i = 0; i < hand.Cards.Count - 1; i++)
+			{
+				if (hand.Cards[i].Face == hand.Cards[i + 1].Face && hand.Cards[i].Face == hand.Cards[i + 2].Face && hand.Cards[i].Face == hand.Cards[i + 3].Face)
+				{
+					FourOfAKindCards = new[] { hand.Cards[i], hand.Cards[i + 1], hand.Cards[i + 2], hand.Cards[i + 3] };
+					break;
+				}
+			}
+		}
 
 		public int CompareTo(IHandSet other)
 		{
-			return other.GetType() == GetType() ? 
-				CompareTo((FourOfAKind)other) : 
-				other.Probability.CompareTo(Probability); 
+			return other.GetType() == GetType() ?
+				CompareTo((FourOfAKind)other) :
+				other.Probability.CompareTo(Probability);
 		}
 
 		public int CompareTo(FourOfAKind other)
@@ -36,32 +48,9 @@ namespace PokerHands.HandSets
 
 		public override string ToString()
 		{
-			return string.Format("Four of a Kind with {0}s", _fourCards.First().Face);
+			return string.Format("Four of a Kind with {0}s", FourOfAKindCards.First().Face);
 		}
-
-		public FourOfAKind(Hand hand)
-		{
-			Hand = hand;
-
-			if (!DoesHandMeetCriteria(Hand))
-				throw new Exception(string.Format("Cannot compose Four of a Kind with hand {0}", Hand));
-
-			SetFourOfAKindCards();
-
-		}
-
-		private void SetFourOfAKindCards()
-		{
-			for (var i = 0; i < Hand.Cards.Count - 1; i++)
-			{
-				if (Hand.Cards[i].Face == Hand.Cards[i + 1].Face && Hand.Cards[i].Face == Hand.Cards[i + 2].Face && Hand.Cards[i].Face == Hand.Cards[i + 3].Face)
-				{
-					_fourCards = new[] { Hand.Cards[i], Hand.Cards[i + 1], Hand.Cards[i + 2], Hand.Cards[i + 3] };
-					break;
-				}
-			}
-
-		}
+		
 
 		public static bool DoesHandMeetCriteria(Hand hand)
 		{

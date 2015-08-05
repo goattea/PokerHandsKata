@@ -4,27 +4,34 @@ namespace PokerHands.HandSets
 {
 	public class StraightFlush : IHandSet
 	{
-		private Card _highCard;
-		
+
 		public double Probability
 		{
 			get { return Constants.Probability.StraightFlush; }
 		}
 
-		public string Name
+		public Card HighCard { get; private set; }
+
+		public StraightFlush(Hand hand)
 		{
-			get { return ToString(); }
+			if (!DoesHandMeetCriteria(hand))
+				throw new Exception(string.Format("Cannot compose Straight Flush with hand {0}", hand));
+
+			SetStraightHighCard(hand);
+
 		}
 
-		public Hand Hand { get; private set; }
-
-		public Card HighCard { get {return _highCard; } }
+		private void SetStraightHighCard(Hand hand)
+		{
+			var straight = new Straight(hand);
+			HighCard = straight.HighCard;
+		}
 
 		public int CompareTo(IHandSet other)
 		{
-			return other.GetType() == GetType() ? 
-				CompareTo((StraightFlush)other) : 
-				other.Probability.CompareTo(Probability); 
+			return other.GetType() == GetType() ?
+				CompareTo((StraightFlush)other) :
+				other.Probability.CompareTo(Probability);
 		}
 
 		public int CompareTo(StraightFlush other)
@@ -34,23 +41,7 @@ namespace PokerHands.HandSets
 
 		public override string ToString()
 		{
-			return string.Format("Straight Flush {0} High", _highCard.Face);
-		}
-
-		public StraightFlush(Hand hand)
-		{
-			Hand = hand;
-			if(!DoesHandMeetCriteria(Hand))
-				throw new Exception(string.Format("Cannot compose Straight Flush with hand {0}", Hand));
-
-			SetStraightHighCard();
-
-		}
-
-		private void SetStraightHighCard()
-		{
-			var straight = new Straight(Hand);
-			_highCard = straight.HighCard;
+			return string.Format("Straight Flush {0} High", HighCard.Face);
 		}
 
 		public static bool DoesHandMeetCriteria(Hand hand)

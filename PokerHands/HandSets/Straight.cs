@@ -5,7 +5,6 @@ namespace PokerHands.HandSets
 {
 	public class Straight : IHandSet
 	{
-		private Card _highCard;
 		private const string StraightAceHigh = "AKQJT98765432";
 		private const string StraightAceLow = "A5432";
 
@@ -14,14 +13,22 @@ namespace PokerHands.HandSets
 			get { return Constants.Probability.Straight; }
 		}
 
-		public string Name
+		public Card HighCard { get; private set; }
+
+		public Straight(Hand hand)
 		{
-			get { return ToString(); }
+			if (!DoesHandMeetCriteria(hand))
+				throw new Exception(string.Format("Cannot compose Straight with hand {0}", hand));
+
+			SetHighCard(hand);
+
 		}
 
-		public Hand Hand { get; private set; }
-
-		public Card HighCard { get {return _highCard; } }
+		private void SetHighCard(Hand hand)
+		{
+			var faces = string.Concat(hand.Cards.Select(f => f.FaceChar).ToArray());
+			HighCard = StraightAceLow.Contains(faces) ? hand.Cards[1] : hand.Cards.First();
+		}
 
 		public int CompareTo(IHandSet other)
 		{
@@ -37,30 +44,10 @@ namespace PokerHands.HandSets
 
 		public override string ToString()
 		{
-			return string.Format("Straight {0} High", _highCard.Face);
+			return string.Format("Straight {0} High", HighCard.Face);
 		}
 
-		public Straight(Hand hand)
-		{
-			Hand = hand;
-			if(!DoesHandMeetCriteria(Hand))
-				throw new Exception(string.Format("Cannot compose Straight with hand {0}", Hand));
-
-			SetHighCard();
-			
-		}
-
-		private void SetHighCard()
-		{
-			var faces = string.Concat(Hand.Cards.Select(f => f.FaceChar).ToArray());
-			if (StraightAceLow.Contains(faces))
-			{
-				var ace = Hand.Cards.First();
-				Hand.Cards.RemoveAt(0);
-				Hand.Cards.Add(ace);
-			}
-			_highCard = Hand.Cards.First();
-		}
+		
 
 		public static bool DoesHandMeetCriteria(Hand hand)
 		{

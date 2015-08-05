@@ -6,23 +6,45 @@ namespace PokerHands.HandSets
 {
 	public class TwoPair : IHandSet
 	{
-		private Card[] _highPairCards;
-		private Card[] _lowPairCards;
-
 		public double Probability
 		{
 			get { return Constants.Probability.TwoPair; }
 		}
 
-		public string Name
+		public Card[] HighPair { get; private set; }
+		public Card[] LowPair { get; private set; }
+		public Card HighCard { get; private set; }
+
+		public TwoPair(Hand hand)
 		{
-			get { return ToString(); }
+			if (!DoesHandMeetCriteria(hand))
+				throw new Exception(string.Format("Cannot compose Two Pair with hand {0}", hand));
+
+			SetHighLowPairs(hand);
 		}
 
-		public Hand Hand { get; private set; }
+		private void SetHighLowPairs(Hand hand)
+		{
+			int highPairIndex = -1, lowPairIndex = 0;
 
-		public Card[] HighPairs { get { return _highPairCards; } }
-		public Card[] LowPairs { get { return _lowPairCards; } }
+			for (var i = 0; i < hand.Cards.Count - 1; i++)
+			{
+				if (hand.Cards[i].Face != hand.Cards[i + 1].Face) continue;
+
+				if (highPairIndex == -1)
+				{
+					highPairIndex = i;
+				}
+				else
+				{
+					lowPairIndex = i;
+				}
+			}
+
+			HighPair = new[] { hand.Cards[highPairIndex], hand.Cards[highPairIndex + 1] };
+			LowPair = new[] { hand.Cards[lowPairIndex], hand.Cards[lowPairIndex + 1] };
+			HighCard = hand.Cards.First(c => c.Face != HighPair.First().Face && c.Face != LowPair.First().Face);
+		}
 
 		public int CompareTo(IHandSet other)
 		{
@@ -33,65 +55,25 @@ namespace PokerHands.HandSets
 
 		public int CompareTo(TwoPair other)
 		{
-			if (HighPairs.First().Face != other.HighPairs.First().Face)
+			if (HighPair.First().Face != other.HighPair.First().Face)
 			{
-				return HighPairs.First().CompareTo(other.HighPairs.First());
+				return HighPair.First().CompareTo(other.HighPair.First());
 			}
 
-			if (LowPairs.First().Face != other.LowPairs.First().Face)
+			if (LowPair.First().Face != other.LowPair.First().Face)
 			{
-				return LowPairs.First().CompareTo(other.LowPairs.First());
+				return LowPair.First().CompareTo(other.LowPair.First());
 			}
 
-			var highCard = new HighCard(new Hand(Hand.Cards.GetRange(4, Hand.Cards.Count - 4)));
-			var otherHighCard = new HighCard(new Hand(other.Hand.Cards.GetRange(4, other.Hand.Cards.Count - 4)));
-			return highCard.CompareTo(otherHighCard);
+			return HighCard.CompareTo(other.HighCard);
 		}
 
 		public override string ToString()
 		{
-			return string.Format("Two Pair {0}s and {1}s", _highPairCards.First().Face, _lowPairCards.First().Face);
+			return string.Format("Two Pair {0}s and {1}s", HighPair.First().Face, LowPair.First().Face);
 		}
 
-		public TwoPair(Hand hand)
-		{
-			Hand = hand;
-
-			if (!DoesHandMeetCriteria(Hand))
-				throw new Exception(string.Format("Cannot compose Two Pair with hand {0}", Hand));
-
-			SetHighLowPairs();
-		}
-
-		private void SetHighLowPairs()
-		{
-			int highPairIndex = -1, lowPairIndex = 0;
-
-			for (var i = 0; i < Hand.Cards.Count - 1; i++)
-			{
-				if (Hand.Cards[i].Face != Hand.Cards[i + 1].Face) continue;
-
-				if (highPairIndex == -1)
-				{
-					highPairIndex = i;
-				}
-				else
-				{
-					lowPairIndex = i;
-					break;
-				}
-			}
-
-			_highPairCards = new[] { Hand.Cards[highPairIndex], Hand.Cards[highPairIndex + 1] };
-			Hand.Cards.RemoveRange(highPairIndex, 2);
-
-			lowPairIndex -= 2;
-			_lowPairCards = new[] { Hand.Cards[lowPairIndex], Hand.Cards[lowPairIndex + 1] };
-			Hand.Cards.RemoveRange(lowPairIndex, 2);
-
-			Hand.Cards.InsertRange(0, _lowPairCards);
-			Hand.Cards.InsertRange(0, _highPairCards);
-		}
+		
 
 		public static bool DoesHandMeetCriteria(Hand hand)
 		{

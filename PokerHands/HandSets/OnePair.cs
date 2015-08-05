@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net.Mime;
 using System.Text.RegularExpressions;
@@ -7,7 +8,6 @@ namespace PokerHands.HandSets
 {
 	public class OnePair : IHandSet
 	{
-		private Card[] _pairCards;
 		private bool _meetsCriteria;
 
 		public double Probability
@@ -15,63 +15,55 @@ namespace PokerHands.HandSets
 			get { return Constants.Probability.OnePair; }
 		}
 
-		public string Name
+		public Card[] Pair { get; private set; }
+
+		public List<Card> Cards { get; set; }
+
+		public OnePair(Hand hand)
 		{
-			get { return ToString(); }
+			if (!DoesHandMeetCriteria(hand))
+				throw new Exception(string.Format("Cannot compose One Pair with hand {0}", hand));
+			Cards = hand.Cards;
+			SetPairCards(hand);
 		}
 
-		public Hand Hand { get; private set; }
+		private void SetPairCards(Hand hand)
+		{
+			for (var i = 0; i < hand.Cards.Count - 1; i++)
+			{
+				if (hand.Cards[i].Face != hand.Cards[i + 1].Face) continue;
 
-		public Card[] Pairs { get { return _pairCards; } }
+				Pair = new[] { hand.Cards[i], hand.Cards[i + 1] };
+				break;
+			}
+
+		}
 
 		public int CompareTo(IHandSet other)
 		{
-			return other.GetType() == GetType() ? 
-				CompareTo((OnePair)other) : 
+			return other.GetType() == GetType() ?
+				CompareTo((OnePair)other) :
 				other.Probability.CompareTo(Probability);
 		}
 
 		public int CompareTo(OnePair other)
 		{
-			if (Pairs.First().Face != other.Pairs.First().Face)
+			if (Pair.First().Face != other.Pair.First().Face)
 			{
-				return Pairs.First().CompareTo(other.Pairs.First());
+				return Pair.First().CompareTo(other.Pair.First());
 			}
 
-			var highCard = new HighCard(new Hand(Hand.Cards.GetRange(2, Hand.Cards.Count - 2)));
-			var otherHighCard = new HighCard(new Hand(other.Hand.Cards.GetRange(2, other.Hand.Cards.Count - 2)));
+			var highCard = new HighCard(new Hand(Cards));
+			var otherHighCard = new HighCard(new Hand(other.Cards));
 			return highCard.CompareTo(otherHighCard);
 		}
 
 		public override string ToString()
 		{
-			return string.Format("Pair of {0}s", _pairCards.First().Face);
+			return string.Format("Pair of {0}s", Pair.First().Face);
 		}
 
-		public OnePair(Hand hand)
-		{
-			Hand = hand;
-			if (!DoesHandMeetCriteria(Hand))
-				throw new Exception(string.Format("Cannot compose One Pair with hand {0}", Hand));
 
-			SetPairCards();
-
-		}
-
-		private void SetPairCards()
-		{
-			for (var i = 0; i < Hand.Cards.Count - 1; i++)
-			{
-				if (Hand.Cards[i].Face == Hand.Cards[i + 1].Face)
-				{
-					_pairCards = new[] { Hand.Cards[i], Hand.Cards[i + 1] };
-					Hand.Cards.RemoveRange(i, 2);
-					Hand.Cards.InsertRange(0, _pairCards);
-					break;
-				}
-			}
-
-		}
 
 		public static bool DoesHandMeetCriteria(Hand hand)
 		{

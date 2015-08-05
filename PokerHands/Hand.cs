@@ -37,7 +37,9 @@ namespace PokerHands
 
 		public override string ToString()
 		{
-			return string.Concat(Cards.Select(c => string.Format("{0}{1} ", c.Face, c.Suit)).ToArray()).TrimEnd();
+			return HandSet != null ? 
+				HandSet.ToString() : 
+				string.Concat(Cards.Select(c => string.Format("{0}{1} ", c.Face, c.Suit)).ToArray()).TrimEnd();
 		}
 	}
 }

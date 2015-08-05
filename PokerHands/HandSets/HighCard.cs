@@ -1,12 +1,11 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace PokerHands.HandSets
 {
 	public class HighCard : IHandSet
 	{
-		private Card _highestCard;
-
 		public double Probability
 		{
 			get { return Constants.Probability.HighCard; }
@@ -17,7 +16,7 @@ namespace PokerHands.HandSets
 			get { return ToString(); }
 		}
 
-		public Hand Hand
+		public List<Card> Cards
 		{
 			get;
 			private set;
@@ -26,8 +25,7 @@ namespace PokerHands.HandSets
 
 		public HighCard(Hand hand)
 		{
-			Hand = hand;
-			_highestCard = Hand.Cards.First();
+			Cards = hand.Cards;
 		}
 
 		public int CompareTo(IHandSet other)
@@ -40,9 +38,9 @@ namespace PokerHands.HandSets
 		public int CompareTo(HighCard other)
 		{
 
-			for (var i = 0; i < Hand.Cards.Count; i++)
+			for (var i = 0; i < Cards.Count; i++)
 			{
-				var compareResult = Hand.Cards[i].CompareTo(other.Hand.Cards[i]);
+				var compareResult = Cards[i].CompareTo(other.Cards[i]);
 				if (compareResult != 0)
 				{
 					return compareResult;
@@ -54,7 +52,7 @@ namespace PokerHands.HandSets
 
 		public override string ToString()
 		{
-			return string.Format("{0} High", _highestCard.Face);
+			return string.Format("{0} High", Cards.First().Face);
 		}
 	}
 }

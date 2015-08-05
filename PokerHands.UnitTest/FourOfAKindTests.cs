@@ -33,7 +33,6 @@ namespace PokerHands.UnitTest
 			var handSet = new FourOfAKind(hand);
 
 			Assert.IsTrue(handSet.FourOfAKindCards.All(f => f.Face == fourOfAKindValue));
-			Assert.AreEqual(lastCard, handSet.Hand.Cards.Last().Face);
 		}
 
 		[Test, Category("Unit")]

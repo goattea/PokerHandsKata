@@ -37,9 +37,7 @@ namespace PokerHands.UnitTest
 		}
 
 		[Test, Category("Unit")]
-		[TestCase("2S 2H 2D 9C 9D", "2C 2D 2H 9S 9H", 0)] // can't happen
-		[TestCase("2S 2H 2D AC AD", "2C 2D 2H KS KH", 1)] // this can't either
-		[TestCase("2S 2H 2S AC AD", "3C 3D 3H 3S 3H", -1)]
+		[TestCase("2S 2H 2S AC AD", "3C 3D 3H 4S 4H", -1)]
 		[TestCase("AS 2H 2S AC AD", "KC KD QH QS KH", 1)]
 		public void FullHouseCompares(string h1, string h2, int equality)
 		{

@@ -26,19 +26,15 @@ namespace PokerHands.UnitTest
 		}
 
 		[Test, Category("Unit")]
-		[TestCase("5S 3H 3D 9C KD", FaceValue.Three, FaceValue.King, FaceValue.Five)]
-		[TestCase("5S KH 3D AC KD", FaceValue.King, FaceValue.Ace, FaceValue.Three)]
-		public void OnePairSort(string handString, string pairFaceValue, string highCard, string lowCard)
+		[TestCase("5S 3H 3D 9C KD", FaceValue.Three)]
+		[TestCase("5S KH 3D AC KD", FaceValue.King)]
+		public void PairSet(string handString, string pairFaceValue)
 		{
 			var hand = new Hand(handString);
 			var handSet = new OnePair(hand);
 
-			var pairs = hand.Cards.GetRange(0, 2).ToList();
-			var otherCards = hand.Cards.GetRange(2, hand.Cards.Count - 2).ToList();
 
-			Assert.IsTrue(pairs.All(c => c.Face == pairFaceValue));
-			Assert.AreEqual(highCard, otherCards.First().Face);
-			Assert.AreEqual(lowCard, otherCards.Last().Face);
+			Assert.IsTrue(handSet.Pair.All(c => c.Face == pairFaceValue));
 		}
 
 		[Test, Category("Unit")]

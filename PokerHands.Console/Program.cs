@@ -35,11 +35,11 @@ namespace PokerHands.Console
 				switch (result)
 				{
 					case 1:
-						System.Console.WriteLine("{0} wins with {1}", game.Player1.Player, game.Player1.Hand.HandSet);
+						System.Console.WriteLine("{0} wins with {1}", game.Player1.Player, game.Player1.Hand);
 						break;
 
 					case -1:
-						System.Console.WriteLine("{0} wins with {1}", game.Player2.Player, game.Player2.Hand.HandSet);
+						System.Console.WriteLine("{0} wins with {1}", game.Player2.Player, game.Player2.Hand);
 						break;
 
 					default:

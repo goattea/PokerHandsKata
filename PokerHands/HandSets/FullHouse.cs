@@ -5,23 +5,29 @@ namespace PokerHands.HandSets
 {
 	public class FullHouse : IHandSet
 	{
-		private Card[] _trioCards;
-		private Card[] _pairCards;
 
 		public double Probability
 		{
 			get { return Constants.Probability.FullHouse; }
 		}
 
-		public string Name
+		public Card[] ThreeOfAKindCards { get; private set; }
+		public Card[] PairCards { get; private set; }
+
+		public FullHouse(Hand hand)
 		{
-			get { return ToString(); }
+			if (!DoesHandMeetCriteria(hand))
+				throw new Exception(string.Format("Cannot compose Full House with hand {0}", hand));
+
+			SetFullHouseCards(hand);
 		}
 
-		public Hand Hand { get; private set; }
-
-		public Card[] ThreeOfAKindCards { get { return _trioCards; } }
-		public Card[] PairCards { get { return _pairCards; } }
+		private void SetFullHouseCards(Hand hand)
+		{
+			var threeOfAKind = new ThreeOfAKind(hand);
+			ThreeOfAKindCards = threeOfAKind.ThreeOfAKindCards;
+			PairCards = hand.Cards.Where(f => f.Face != threeOfAKind.ThreeOfAKindCards.First().Face).ToArray();
+		}
 
 		public int CompareTo(IHandSet other)
 		{
@@ -37,24 +43,9 @@ namespace PokerHands.HandSets
 
 		public override string ToString()
 		{
-			return string.Format("Full House with three {0}s and a pair of {1}s", _trioCards.First().Face, _pairCards.First().Face);
+			return string.Format("Full House with three {0}s and a pair of {1}s", ThreeOfAKindCards.First().Face, PairCards.First().Face);
 		}
 
-		public FullHouse(Hand hand)
-		{
-			Hand = hand;
-			if (!DoesHandMeetCriteria(Hand))
-				throw new Exception(string.Format("Cannot compose Full House with hand {0}", Hand));
-
-			SetFullHouseCards();
-		}
-
-		private void SetFullHouseCards()
-		{
-			var threeOfAKind = new ThreeOfAKind(Hand);
-			_trioCards = threeOfAKind.ThreeOfAKindCards;
-			_pairCards = Hand.Cards.Where(f => f.Face != threeOfAKind.ThreeOfAKindCards.First().Face).ToArray();
-		}
 
 		public static bool DoesHandMeetCriteria(Hand hand)
 		{

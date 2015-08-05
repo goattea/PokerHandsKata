@@ -12,7 +12,7 @@ namespace PokerHands.UnitTest
 		[TestCase("5S 2H AD 9C KD", false)]
 		[TestCase("5S 3H 3D 9C KD", false)]
 		[TestCase("KS QS JS TS AS", true)]
-		public void RoyalFlushsDetected(string h1, bool hasPair)
+		public void RoyalFlushsDetected(string h1, bool meetsCriteria)
 		{
 			//Arrange
 			var hand1 = new Hand(h1);
@@ -21,7 +21,7 @@ namespace PokerHands.UnitTest
 			var result = RoyalFlush.DoesHandMeetCriteria(hand1);
 
 			//Assert
-			Assert.AreEqual(hasPair, result);
+			Assert.AreEqual(meetsCriteria, result);
 		}
 
 		
