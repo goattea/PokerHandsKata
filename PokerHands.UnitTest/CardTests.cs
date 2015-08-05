@@ -1,10 +1,11 @@
-﻿using System;
+﻿using System.Linq;
 using NUnit.Framework;
+using PokerHands.Constants;
 
 namespace PokerHands.UnitTest
 {
 	[TestFixture]
-	public class UnitTest1
+	public class CardTests
 	{
 		[Test, Category("Unit")]
 		[TestCase('A', 'S', 14)]
@@ -12,19 +13,15 @@ namespace PokerHands.UnitTest
 		[TestCase('Q', 'S', 12)]
 		[TestCase('J', 'S', 11)]
 		[TestCase('T', 'S', 10)]
-		[TestCase('9', 'S',9)]
+		[TestCase('9', 'S', 9)]
 		[TestCase('8', 'S', 8)]
 		[TestCase('7', 'S', 7)]
 		[TestCase('6', 'S', 6)]
 		public void GetFaceValueForCard(char faceValue, char suit, int result)
 		{
-			//Arrange
-			var card = new Card(faceValue, suit);
+			var card = new Card(string.Format("{0}{1}", faceValue, suit));
 
-			Assert.AreEqual(result, card.FaceValue);
-			//Act
-
-			//Assert
+			Assert.AreEqual(result, FaceValue.GetFaceValue(card.Face));
 		}
 
 		[Test, Category("Unit")]
@@ -35,22 +32,14 @@ namespace PokerHands.UnitTest
 		{
 			//Arrange
 
-			var blackCard = new Card(blackFaceValue, blackSuit);
-			var whiteCard = new Card(whiteFaceValue, whiteSuit);
+			var blackCard = new Card(string.Format("{0}{1}", blackFaceValue, blackSuit));
+			var whiteCard = new Card(string.Format("{0}{1}", whiteFaceValue, whiteSuit));
 
 			int result = blackCard.CompareTo(whiteCard);
 
 			Assert.AreEqual(expectedResult, result);
 		}
 
-		[Test, Category("Unit")]
-		[TestCase("5S 2H 3D 9C KD")]
-		public void CardAreSorted(string handValue)
-		{
-			Hand hand = new Hand(handValue);
-
-			Assert.True(hand.Cards[0].FaceValue == 2);
-		}
 	}
 }
 

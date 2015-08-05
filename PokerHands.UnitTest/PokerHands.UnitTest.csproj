@@ -56,14 +56,28 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="Card.cs" />
-    <Compile Include="Hand.cs" />
-    <Compile Include="Ruleset.cs" />
-    <Compile Include="UnitTest1.cs" />
+    <Compile Include="HandTests.cs" />
+    <Compile Include="FlushTests.cs" />
+    <Compile Include="FullHouseTests.cs" />
+    <Compile Include="FourOfAKindTests.cs" />
+    <Compile Include="StraightFlushTests.cs" />
+    <Compile Include="RoyalFlushTests.cs" />
+    <Compile Include="ThreeOfAKindTests.cs" />
+    <Compile Include="StraightTests.cs" />
+    <Compile Include="TwoPairTests.cs" />
+    <Compile Include="OnePairTests.cs" />
+    <Compile Include="HandSetTests.cs" />
+    <Compile Include="CardTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\PokerHands\PokerHands.csproj">
+      <Project>{cf907a94-6f5e-476d-b69f-fa9d72949a87}</Project>
+      <Name>PokerHands</Name>
+    </ProjectReference>
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
